@@ -41,7 +41,7 @@ export default function Navbar() {
         <div className="flex items-center gap-3 md:gap-4">
           {/* Sign In Link (Hidden on very small screens) */}
           <a 
-            href="#" 
+            href="/sign-in" 
             className="hidden sm:block text-sm font-medium text-indigo-400 transition-colors hover:text-indigo-300"
           >
             Sign In
