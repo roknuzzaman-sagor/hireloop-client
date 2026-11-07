@@ -26,7 +26,7 @@ const SignUpPage = () => {
         name,
         email,
         password,
-        callbackURL: "/",
+        callbackURL: "sign-in",
       })
 
       if (error) {

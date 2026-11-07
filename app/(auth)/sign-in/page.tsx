@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Navbar from "@/components/Navbar" // <-- Import your Navbar
+import { authClient } from "@/lib/auth-client";
 
 const SignInPage = () => {
   const [email, setEmail] = React.useState("")
@@ -17,10 +18,14 @@ const SignInPage = () => {
     e.preventDefault()
     setIsLoading(true)
     
-    // Add your sign-in functionality here later
-    console.log("Sign In:", { email, password })
+    const {data, error} = await authClient.signIn.email({
+      email,
+      password,
+      rememberMe:true,
+      callbackURL:'/'
+    })
     
-    setTimeout(() => setIsLoading(false), 1500)
+      console.log(data,error);
   }
 
   return (
