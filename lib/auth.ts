@@ -1,9 +1,11 @@
 import { betterAuth } from "better-auth";
 import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
+import { USER_ROLE_FIELD } from "@/lib/user-role";
 const client = new MongoClient(process.env.MONGODB_URI as string);
 const db = client.db('hireloopdb');
 export const auth = betterAuth({
+    baseURL: process.env.BETTER_AUTH_URL,
 
     emailAndPassword: {
         enabled: true,
@@ -11,10 +13,7 @@ export const auth = betterAuth({
 
     user: {
         additionalFields: {
-            role: {
-                type: ['seeker','recruiter','admin'],
-                input: false
-            }
+            role: USER_ROLE_FIELD
         }
     },
 

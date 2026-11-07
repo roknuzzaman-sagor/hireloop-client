@@ -2,19 +2,28 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { User, Mail, Lock, Loader2 } from "lucide-react"
+import {
+  BriefcaseBusiness,
+  Loader2,
+  Lock,
+  Mail,
+  ShieldCheck,
+  UserRound,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Navbar from "@/components/Navbar"
 import { authClient } from "@/lib/auth-client"
+import { USER_ROLES, type UserRole } from "@/lib/user-role"
 
 const SignUpPage = () => {
   const [name, setName] = React.useState("")
   const [email, setEmail] = React.useState("")
   const [password, setPassword] = React.useState("")
+  const [role, setRole] = React.useState<UserRole>("seeker")
   const [isLoading, setIsLoading] = React.useState(false)
-  const [error, setError] = React.useState<string | null>(null) // ✅ new
+  const [error, setError] = React.useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -26,23 +35,20 @@ const SignUpPage = () => {
         name,
         email,
         password,
-        callbackURL: "sign-in",
+        role,
+        callbackURL: "/sign-in",
       })
 
       if (error) {
-        // ✅ surface the API error to the user
         setError(error.message ?? "Failed to create account")
-        
+        return
       }
 
       console.log("Sign up success:", data)
-      // optional: redirect, toast, etc.
     } catch (err) {
-      // ✅ catch network / unexpected errors
       setError("Something went wrong. Please try again.")
       console.error(err)
     } finally {
-      // ✅ always stop the spinner, no matter what happened
       setIsLoading(false)
     }
   }
@@ -64,7 +70,6 @@ const SignUpPage = () => {
             </p>
           </div>
 
-          {/* ✅ visible error message */}
           {error && (
             <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm text-red-400">
               {error}
@@ -72,11 +77,56 @@ const SignUpPage = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            <fieldset className="space-y-2">
+              <legend className="mb-2 text-sm font-medium text-gray-300">
+                I want to join as a
+              </legend>
+              <div className="grid grid-cols-3 gap-2">
+                {USER_ROLES.map((option) => {
+                  const roleDetails = {
+                    seeker: {
+                      label: "Job Seeker",
+                      icon: UserRound,
+                    },
+                    recruiter: {
+                      label: "Recruiter",
+                      icon: BriefcaseBusiness,
+                    },
+                    admin: {
+                      label: "Admin",
+                      icon: ShieldCheck,
+                    },
+                  }[option]
+                  const Icon = roleDetails.icon
+
+                  return (
+                    <label
+                      key={option}
+                      className="cursor-pointer rounded-xl focus-within:ring-2 focus-within:ring-indigo-500"
+                    >
+                      <input
+                        type="radio"
+                        name="role"
+                        value={option}
+                        checked={role === option}
+                        onChange={() => setRole(option)}
+                        className="peer sr-only"
+                      />
+                      <span className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#18181b] px-2 py-3 text-center text-xs font-medium text-gray-400 transition-colors peer-checked:border-indigo-500 peer-checked:bg-indigo-500/10 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-indigo-500 sm:text-sm">
+                        <Icon className="h-5 w-5 text-indigo-400" aria-hidden="true" />
+                        {roleDetails.label}
+                      </span>
+                    </label>
+                  )
+                })}
+              </div>
+            </fieldset>
+
             {/* name */}
             <div className="space-y-2">
               <Label htmlFor="name" className="text-gray-300">Full Name</Label>
               <div className="relative">
-                <User className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                <UserRound className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
                 <Input
                   id="name"
                   type="text"
